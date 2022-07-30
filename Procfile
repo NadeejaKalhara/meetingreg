@@ -1,1 +1,1 @@
-worker: node register.js
+web: npm start
