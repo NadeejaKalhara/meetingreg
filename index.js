@@ -1,6 +1,5 @@
 const express = require('express')
 const path = require('path')
-const PORT = process.env.PORT || 5000
 const request = require('request');
 var bodyParser = require('body-parser');
 const { json } = require('express');
@@ -8,8 +7,12 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
-var port = process.env.PORT || 9000;
 
+var port = process.env.PORT || 5000;
+app.use(express.static(path.join(__dirname, 'public')))
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'ejs')
+app.get('/', (req, res) => res.render('pages/index'))
 app.post('/zoom', function(req, res) {
   const BOT_TOKEN = '5403190293:AAEHtiIEaSVESqcIrRmN202eOm5niqZ5_hA'
 const CHAT_ID = -1001615440082 // <YOUR_CHAT_ID>
@@ -182,9 +185,4 @@ app.listen(port);
 console.log('Server started! At http://localhost:' + port);
 
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+
