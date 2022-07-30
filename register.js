@@ -16,16 +16,16 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
-var port = 9000;
+const PORT = process.env.PORT || 9000
 
 app.post('/register', function(req, res) {
     console.log('receiving data ...');
     console.log('body is ',req.body);
     res.send(req.body);
-    
+   
     bot.sendMessage(-1001615440082,"Hello")
 });
 
 // start the server
-app.listen(port);
-console.log('Server started! At http://localhost:' + port);
+app.listen(PORT);
+console.log('Server started! At http://localhost:' + PORT);
