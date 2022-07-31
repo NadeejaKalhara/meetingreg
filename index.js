@@ -116,7 +116,8 @@ tsn = `${
     padL(dt.getMinutes())}:${
     padL(dt.getSeconds())}`
 
-              tmMsg(`<b>`+cname+`</b> New Student Registered. <b>Name: </b>`+tnm+`<b> Student ID: </b>`+sid+`<b> Join URL: </b>`+joinl+`<b> Class ID: </b>`+cid+`<b> Meeting ID: </b>`+zid+`<b> Meeting Topic: </b>`+JSON.parse(response.body)["topic"]+`<b> TimeStamp : </b>`+tsn )
+              
+            tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +  joinl + `\n` + `Timestamp: ` + tsn )
               
               if (!error) //throw new Error(error);
                 console.log(response.body);
