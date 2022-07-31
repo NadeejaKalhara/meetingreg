@@ -84,7 +84,10 @@ console.log(`https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabas
           url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/students/`+sid+`/name.json`,
         };
         request(options, function (error, response) {
-          tnm = JSON.parse(response.body)["name"]
+          if(response.body==null){
+            res.send("No Such Student Registered")
+          }else{
+          tnm = JSON.parse(response.body)["name"]}
           const zome = () => {
             const options = {
               method: 'POST',
@@ -178,7 +181,11 @@ getmid();
     aa =  JSON.parse(JSON.stringify(req.body))
      pn = aa["pn"]
      cname = aa["cname"]
-    pc(aa["sid"],aa["cid"])
+     if(aa["pn"]!=null&&cname!=null||aa["pn"]!=''&&cname!=''){
+    pc(aa["sid"],aa["cid"])} else{
+      res.send("Filed Errors - Unusual Activity")
+      tmMsg("Crticial Unusual Activity - "+req.body )
+    }
     ;
 });
 
