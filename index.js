@@ -3,18 +3,20 @@ var CryptoJS = require("crypto-js");
 const path = require('path')
 const request = require('request');
 var bodyParser = require('body-parser');
+var queue = require('express-queue');
 var cors = require('cors');
 const { json } = require('express');
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 app.use(cors());
-
+app.use(queue({ activeLimit: 1, queuedLimit: -1 }));
 var port = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.get('/', (req, res) => res.render('pages/index'))
+
 app.post('/zoom', function(req, res) {
   const BOT_TOKEN = '5403190293:AAEHtiIEaSVESqcIrRmN202eOm5niqZ5_hA'
 const CHAT_ID = -1001615440082 // <YOUR_CHAT_ID>
@@ -33,40 +35,30 @@ const tmMsg = (text) => {
   });
 };
 
-const pc = (sid,cid) => {
+const pc = (sid,cid,pn) => {
+
   var today = new Date();
   var mn = today.getUTCMonth()+1;
-  console.log(`https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/pay/`+cid+`/`+sid+`/`+mn+`.json`)
- 
-  const options = {
+   const options = {
     method: 'GET',
     url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/pay/`+cid+`/`+sid+`/`+mn+`.json`,
   };
   request(options, function (error, response) {
     if(response.body=='"ok"'){
       console.log("Paid")
-      const getmid = () => {
+
+      const getmid = (pn) => {
         const options = {
           method: 'GET',
           url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/zoomid/`+cid+`.json`,
         };
         request(options, function (error, response) {
-         tt = JSON.parse(response.body)
-         console.log(tt["id"])
-         zid = tt["id"]
-         const zoth = () => {
+    
         
-          const options = {
-            method: 'POST',
-            url: `https://zoom.us/oauth/token?grant_type=account_credentials&account_id=`+accid,
-            headers: { 'Content-Type': 'application/json',
-            'Authorization':"Basic "+bsix },
-            body: JSON.stringify({ })
-          };
-          request(options, function (error, response) {
-            tkna = JSON.parse(response.body)["access_token"]
+   
+ 
       console.log(`https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/students/`+sid+`/name.json`)
-            const stname = () => {
+            const stname = (tkna,zid) => {
               const options = {
                 method: 'GET',
                 url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/students/`+sid+`/name.json`,
@@ -75,7 +67,7 @@ const pc = (sid,cid) => {
                 if(response.body=="null"){
                   res.send("No Such Student Registered")
                 }else{
-                  const zome = () => {
+                  const zome = (tnm,tkna) => {
                     const options = {
                       method: 'POST',
                       url: `https://api.zoom.us/v2/meetings/`+zid+`/registrants`,
@@ -93,8 +85,8 @@ const pc = (sid,cid) => {
                       })
                     };
                     request(options, function (error, response) {
-                      joinl = JSON.parse(response.body)["join_url"]
-                      res.send(joinl)
+                    
+                      
                       const dt = new Date();
         const padL = (nr, len = 2, chr = `0`) => `${nr}`.padStart(2, chr);
         
@@ -106,57 +98,43 @@ const pc = (sid,cid) => {
             padL(dt.getMinutes())}:${
             padL(dt.getSeconds())}`
         
-                      
-                    tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +  joinl + `\n` + `Timestamp: ` + tsn )
+            if (response.body.includes("zoom.us/w")){
+              res.send( JSON.parse(response.body)["join_url"])
+                    tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +   JSON.parse(response.body)["join_url"] + `\n` + `Timestamp: ` + tsn )}
+                    else {
+                      res.send(response.body)
+                      tmMsg(response.body)
+                    }
                       
                       if (!error) //throw new Error(error);
                         console.log(response.body);
                       else console.log(error);
                     });
                   };
-                  tnm = JSON.parse(response.body)["name"]
-                  zome()
+                  
+                  zome(JSON.parse(response.body)["name"],tkna)
                 }
        
       
       
-                console.log(tnm)
+       
                 if (!error) //throw new Error(error);
                   console.log(response.body);
                 else console.log(error);
               });
             };
-          stname();
-      
-      
-      
-      
-            if (!error) //throw new Error(error);
-              console.log(response.body);
-            else console.log(error);
-          });
-        };
-        zoth();
-      
-          if (!error) //throw new Error(error);
-          console.log(response.body);
-          else console.log(error);
-        });
-      }
-      //ZOOM AUTH
-      const gtk = () => {
+                  //ZOOM AUTH
+      const gtk = (pnn,zid) => {
         const options = {
-          method: 'GET',
-          url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/zoomauth/`+encodeURIComponent(pn)+`.json`,
-        };
+          method: 'POST',
+          url: `https://zoomaccess.herokuapp.com/tk`,
+          headers: { 'Content-Type': 'application/json' },
+          body:JSON.stringify({pn:pnn})
+        };;
         request(options, function (error, response) {
           if (response.body!='null'){
-            cc = JSON.parse(response.body);
-            accid = cc["accid"]
-            console.log(accid)
-            bsix = cc["auth"]
-            console.log(bsix)
-            getmid();
+            stname(response.body,zid);
+          //succ
           } else{
             res.send("Invalid Tutor ID")
           }
@@ -169,9 +147,22 @@ const pc = (sid,cid) => {
           else console.log(error);
         });
       };
+      gtk(pn,JSON.parse(response.body)["id"])
+          
+      
+      
+      
+      
+     
+          
+        ;
+  
+   
+        });
+      }
+      getmid(pn);
 
-      gtk();
-
+  
     }
           if(response.body!='"ok"'){
       console.log("nopay")
@@ -194,11 +185,11 @@ authid = "R6VzrAkdsXDAaEOT^Tob19O5@$9@V#$Ic&u!QCGR4LO$3&ktCV"
     console.log(CryptoJS.AES.decrypt(temp, authid).toString(CryptoJS.enc.Utf8))
     outc = CryptoJS.AES.decrypt(temp, authid).toString(CryptoJS.enc.Utf8)
     aa =  JSON.parse(outc)
-     pn = aa["pn"]
+    
      console.log(aa["pn"])
-     cname = aa["cname"]
-     if(aa["pn"]!=undefined&&cname!=undefined||aa["pn"]!=''&&cname!=''){
-    pc(aa["sid"],aa["cid"])} else{
+
+     if(aa["pn"]!=undefined||aa["pn"]!=''){
+    pc(aa["sid"],aa["cid"],aa["pn"])} else{
       res.send("Filed Errors - Unusual Activity")
       tmMsg("Crticial Unusual Activity - "+req.body )
     }
