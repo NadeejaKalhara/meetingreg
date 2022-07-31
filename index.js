@@ -34,7 +34,7 @@ const tmMsg = (text) => {
 
 const pc = (sid,cid) => {
   var today = new Date();
-  var mn = today.getUTCMonth();
+  var mn = today.getUTCMonth()+1;
   console.log(`https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/pay/`+cid+`/`+sid+`/`+mn+`.json`)
  
   const options = {
