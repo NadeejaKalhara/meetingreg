@@ -3,14 +3,19 @@ var CryptoJS = require("crypto-js");
 const path = require('path')
 const request = require('request');
 var bodyParser = require('body-parser');
-var queue = require('express-queue');
 var cors = require('cors');
 const { json } = require('express');
+var firebase = require("firebase-admin");
+
+var serviceAccount = require(__dirname+"/private/cre.json");
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: "https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 app.use(cors());
-app.use(queue({ activeLimit: 1, queuedLimit: -1 }));
 var port = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'))
@@ -36,38 +41,28 @@ const tmMsg = (text) => {
 };
 
 const pc = (sid,cid,pn) => {
-
   var today = new Date();
   var mn = today.getUTCMonth()+1;
-   const options = {
-    method: 'GET',
-    url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/pay/`+cid+`/`+sid+`/`+mn+`.json`,
-  };
-  request(options, function (error, response) {
-    if(response.body=='"ok"'){
-      console.log("Paid")
+  
 
+
+   const v2 = (rep) => {
+    console.log(rep)
+    if(rep=='ok'){
+      console.log("Paid")
+  
       const getmid = (pn) => {
-        const options = {
-          method: 'GET',
-          url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/zoomid/`+cid+`.json`,
-        };
-        request(options, function (error, response) {
-    
-        
-   
- 
-      console.log(`https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/students/`+sid+`/name.json`)
+        const v3 = (zid) => { 
+          console.log(zid)
             const stname = (tkna,zid) => {
-              const options = {
-                method: 'GET',
-                url: `https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app/students/`+sid+`/name.json`,
-              };
-              request(options, function (error, response) {
-                if(response.body=="null"){
+       
+
+                 const v4 = (tkna,tnm,zid) => { 
+                if(tnm=="null"){
                   res.send("No Such Student Registered")
                 }else{
-                  const zome = (tnm,tkna) => {
+                  const zome = (tnm,tkna,zid) => {
+                    console.log(tnm+tkna+zid)
                     const options = {
                       method: 'POST',
                       url: `https://api.zoom.us/v2/meetings/`+zid+`/registrants`,
@@ -100,7 +95,8 @@ const pc = (sid,cid,pn) => {
         
             if (response.body.includes("zoom.us/w")){
               res.send( JSON.parse(response.body)["join_url"])
-                    tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +   JSON.parse(response.body)["join_url"] + `\n` + `Timestamp: ` + tsn )}
+                    tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +   JSON.parse(response.body)["join_url"] + `\n` + `Timestamp: ` + tsn )
+            }
                     else {
                       res.send(response.body)
                       tmMsg(response.body)
@@ -108,22 +104,22 @@ const pc = (sid,cid,pn) => {
                       
                       if (!error) //throw new Error(error);
                         console.log(response.body);
-                      else console.log(error);
                     });
                   };
                   
-                  zome(JSON.parse(response.body)["name"],tkna)
-                }
-       
-      
-      
-       
-                if (!error) //throw new Error(error);
-                  console.log(response.body);
-                else console.log(error);
-              });
-            };
-                  //ZOOM AUTH
+                  zome(tnm,tkna,zid)
+}
+
+              
+ }
+ var path3 = `students/`+sid+`/name/name`
+ // Create References
+ const dbRefObject = firebase.database().ref().child(path3);
+ // Sync object changes
+ dbRefObject.once('value', get => v4(tkna,get.val(),zid));  
+  
+        }
+                             //ZOOM AUTH
       const gtk = (pnn,zid) => {
         const options = {
           method: 'POST',
@@ -133,49 +129,47 @@ const pc = (sid,cid,pn) => {
         };;
         request(options, function (error, response) {
           if (response.body!='null'){  
+            console.log(response.body)
             stname(response.body,zid);
+            
           //succ
           } else{
             res.send("Invalid Tutor ID")
           }
-         
-
-
-          if (!error) //throw new Error(error);
-            console.log(response.body);
-          
-          else console.log(error);
         });
-      };
-      gtk(pn,JSON.parse(response.body)["id"])
-          
-      
-      
-      
-      
-     
-          
-        ;
-  
-   
-        });
+      };     
+        gtk(pn,zid) 
+
       }
-      getmid(pn);
+      var path3 = `zoomid/`+cid+"/id"
+      // Create References
+      const dbRefObject = firebase.database().ref().child(path3);
+      // Sync object changes
+      dbRefObject.once('value', get => v3(get.val()));
 
   
     }
-          if(response.body!='"ok"'){
-      console.log("nopay")
-      res.send("Class fees not paid")
-      tmMsg("Unusual Activity detected from:"+sid+" - ")
-    }
-    if (!error) //throw new Error(error);
-      console.log(response.body);
-  
-    else console.log(error);
-  });
+    getmid(pn);
+      
+ 
+    
+  }else{
+    console.log("nopay")
+    res.send("Class fees not paid")
+    tmMsg("Unusual Activity detected from:"+sid+" - ")
+  }
+
+
 };
 
+var path3 = `pay/`+ cid +`/`+ sid+  `/`+ mn
+// Create References
+const dbRefObject = firebase.database().ref().child(path3);
+// Sync object changes
+dbRefObject.once('value', get => v2(get.val()));
+
+}
+ 
 authid = "R6VzrAkdsXDAaEOT^Tob19O5@$9@V#$Ic&u!QCGR4LO$3&ktCV"
     console.log('receiving data ...');
     console.log('body is ',req.body);
@@ -192,8 +186,7 @@ authid = "R6VzrAkdsXDAaEOT^Tob19O5@$9@V#$Ic&u!QCGR4LO$3&ktCV"
     pc(aa["sid"],aa["cid"],aa["pn"])} else{
       res.send("Filed Errors - Unusual Activity")
       tmMsg("Crticial Unusual Activity - "+req.body )
-    }
-    ;
+}
 });
 
 // start the server
