@@ -57,7 +57,7 @@ const getmid = (pn,sid,cid) => {
                 url: `https://api.zoom.us/v2/meetings/`+zid+`/registrants`,
                 headers: { 'Content-Type': 'application/json',"Authorization":"Bearer "+tkna },
                 body: JSON.stringify({
-                  "first_name": sid,
+                  "first_name": "AD"+("000" + sid).slice(-4),
                   "last_name":tnm ,
                   "email": sid+"@aduruthuma.lk",
                   "state": "Sri Lanka",
@@ -81,11 +81,11 @@ const getmid = (pn,sid,cid) => {
       padL(dt.getHours())}:${
       padL(dt.getMinutes())}:${
       padL(dt.getSeconds())}`
-  
+  if(response.body!=null){
       if (response.body.includes("zoom.us/w")){
         res.send( JSON.parse(response.body)["join_url"])
-              tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +   JSON.parse(response.body)["join_url"] + `\n` + `Timestamp: ` + tsn )
-      }
+              tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + "AD"+("000" + sid).slice(-4) + ` ` + tnm + `\n` + `Join URL: ` +   JSON.parse(response.body)["join_url"] + `\n` + `Timestamp: ` + tsn )
+      }}
               else {
                 res.send(response.body)
                 tmMsg(response.body)
