@@ -39,11 +39,133 @@ const tmMsg = (text) => {
     else console.log(error);
   });
 };
+const getmid = (pn,sid,cid) => {
+  const v3 = (zid) => { 
+    console.log(zid)
+      const stname = (tkna,zid) => {
+ 
+
+           const v4 = (tkna,tnm,zid) => { 
+            var collect = tnm["fn"]+" "+tnm["ln"]
+          if(tnm=="null"){
+            res.send("No Such Student Registered")
+          }else{
+            const zome = (tnm,tkna,zid) => {
+              console.log(tnm+tkna+zid)
+              const options = {
+                method: 'POST',
+                url: `https://api.zoom.us/v2/meetings/`+zid+`/registrants`,
+                headers: { 'Content-Type': 'application/json',"Authorization":"Bearer "+tkna },
+                body: JSON.stringify({
+                  "first_name": sid,
+                  "last_name":tnm ,
+                  "email": sid+"@aduruthuma.lk",
+                  "state": "Sri Lanka",
+                  "comments": "PAID CARD",
+                  "job_title": "Student",
+                  "org": "Aduruthuma LMS",
+                  "language": "en-US",
+                  "auto_approve": true
+                })
+              };
+              request(options, function (error, response) {
+              
+                
+                const dt = new Date();
+  const padL = (nr, len = 2, chr = `0`) => `${nr}`.padStart(2, chr);
+  
+  tsn = `${
+      padL(dt.getMonth()+1)}/${
+      padL(dt.getDate())}/${
+      dt.getFullYear()} ${
+      padL(dt.getHours())}:${
+      padL(dt.getMinutes())}:${
+      padL(dt.getSeconds())}`
+  
+      if (response.body.includes("zoom.us/w")){
+        res.send( JSON.parse(response.body)["join_url"])
+              tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +   JSON.parse(response.body)["join_url"] + `\n` + `Timestamp: ` + tsn )
+      }
+              else {
+                res.send(response.body)
+                tmMsg(response.body)
+              }
+                
+                if (!error) //throw new Error(error);
+                  console.log(response.body);
+              });
+            };
+            
+            zome(collect,tkna,zid)
+}
+
+        
+}
+var path3 = `students/`+sid
+// Create References
+const dbRefObject = firebase.database().ref().child(path3);
+// Sync object changes
+dbRefObject.once('value', get => v4(tkna,get.val(),zid));  
+
+  }
+                       //ZOOM AUTH
+const gtk = (pnn,zid) => {
+  const options = {
+    method: 'POST',
+    url: `https://zakaduruthma.herokuapp.com/tk`,
+    headers: { 'Content-Type': 'application/json' },
+    body:JSON.stringify({pn:pnn})
+  };;
+  request(options, function (error, response) {
+    if (response.body!='null'){  
+      console.log(response.body)
+      stname(response.body,zid);
+      
+    //succ
+    } else{
+      res.send("Invalid Tutor ID")
+    }
+  });
+};     
+
+  const acctk = (d) => {
+    console.log(d)
+    if(d=="null"){
+      gtk(pn,zid) 
+    } else{
+      xx = d
+      console.log(xx["tm"])
+      if(3500>(Math.floor(new Date().getTime() / 1000)-xx["tm"])){
+      stname(xx["tk"],zid);
+      } else{
+        gtk(pn,zid) 
+      }
+    }
+  }
+  var path =   "/zoomauth/temp/" + pn
+
+  // Create References
+  const dbRefObject0023 = firebase.database().ref().child(path);
+  
+  // Sync object changes
+  dbRefObject0023.once('value', snap => acctk(snap.val()));;
+                
+
+}
+var path3 = `zoomid/`+cid+"/id"
+// Create References
+const dbRefObject = firebase.database().ref().child(path3);
+// Sync object changes
+dbRefObject.once('value', get => v3(get.val()));
+
+
+}
+
 
 const pc = (sid,cid,pn) => {
   var today = new Date();
   var mn = today.getUTCMonth()+1;
-  
+  console.log("Current Month is "+ mn)
 
 
    const v2 = (rep) => {
@@ -51,135 +173,15 @@ const pc = (sid,cid,pn) => {
     if(rep=='ok'){
       console.log("Paid")
   
-      const getmid = (pn) => {
-        const v3 = (zid) => { 
-          console.log(zid)
-            const stname = (tkna,zid) => {
-       
 
-                 const v4 = (tkna,tnm,zid) => { 
-                  var collect = tnm["fn"]+" "+tnm["ln"]
-                if(tnm=="null"){
-                  res.send("No Such Student Registered")
-                }else{
-                  const zome = (tnm,tkna,zid) => {
-                    console.log(tnm+tkna+zid)
-                    const options = {
-                      method: 'POST',
-                      url: `https://api.zoom.us/v2/meetings/`+zid+`/registrants`,
-                      headers: { 'Content-Type': 'application/json',"Authorization":"Bearer "+tkna },
-                      body: JSON.stringify({
-                        "first_name": sid,
-                        "last_name":tnm ,
-                        "email": sid+"@aduruthuma.lk",
-                        "state": "Sri Lanka",
-                        "comments": "PAID CARD",
-                        "job_title": "Student",
-                        "org": "Aduruthuma LMS",
-                        "language": "en-US",
-                        "auto_approve": true
-                      })
-                    };
-                    request(options, function (error, response) {
-                    
-                      
-                      const dt = new Date();
-        const padL = (nr, len = 2, chr = `0`) => `${nr}`.padStart(2, chr);
-        
-        tsn = `${
-            padL(dt.getMonth()+1)}/${
-            padL(dt.getDate())}/${
-            dt.getFullYear()} ${
-            padL(dt.getHours())}:${
-            padL(dt.getMinutes())}:${
-            padL(dt.getSeconds())}`
-        
-            if (response.body.includes("zoom.us/w")){
-              res.send( JSON.parse(response.body)["join_url"])
-                    tmMsg(`<b>` + `New Student has been Sucessfully admitted to the class ` + JSON.parse(response.body)["topic"] + `</b>` + `\n` + `Class ID: ` + cid + `\n` + `Student Name: ` + sid + ` ` + tnm + `\n` + `Join URL: ` +   JSON.parse(response.body)["join_url"] + `\n` + `Timestamp: ` + tsn )
-            }
-                    else {
-                      res.send(response.body)
-                      tmMsg(response.body)
-                    }
-                      
-                      if (!error) //throw new Error(error);
-                        console.log(response.body);
-                    });
-                  };
-                  
-                  zome(collect,tkna,zid)
-}
-
-              
- }
- var path3 = `students/`+sid
- // Create References
- const dbRefObject = firebase.database().ref().child(path3);
- // Sync object changes
- dbRefObject.once('value', get => v4(tkna,get.val(),zid));  
-  
-        }
-                             //ZOOM AUTH
-      const gtk = (pnn,zid) => {
-        const options = {
-          method: 'POST',
-          url: `https://zakaduruthma.herokuapp.com/tk`,
-          headers: { 'Content-Type': 'application/json' },
-          body:JSON.stringify({pn:pnn})
-        };;
-        request(options, function (error, response) {
-          if (response.body!='null'){  
-            console.log(response.body)
-            stname(response.body,zid);
-            
-          //succ
-          } else{
-            res.send("Invalid Tutor ID")
-          }
-        });
-      };     
-     
-        const acctk = (d) => {
-          console.log(d)
-          if(d=="null"){
-            gtk(pn,zid) 
-          } else{
-            xx = d
-            console.log(xx["tm"])
-            if(3500>(Math.floor(new Date().getTime() / 1000)-xx["tm"])){
-            stname(xx["tk"],zid);
-            } else{
-              gtk(pn,zid) 
-            }
-          }
-        }
-        var path =   "/zoomauth/temp/" + pn
-
-        // Create References
-        const dbRefObject0023 = firebase.database().ref().child(path);
-        
-        // Sync object changes
-        dbRefObject0023.once('value', snap => acctk(snap.val()));;
-                      
-
-      }
-      var path3 = `zoomid/`+cid+"/id"
-      // Create References
-      const dbRefObject = firebase.database().ref().child(path3);
-      // Sync object changes
-      dbRefObject.once('value', get => v3(get.val()));
-
-  
-    }
-    getmid(pn);
+    getmid(pn,sid,cid);
       
  
     
   }else{
     console.log("nopay")
     res.send("Class fees not paid")
-    tmMsg("Unusual Activity detected from:"+sid+" - ")
+    tmMsg("Not Paid Student ID:"+sid+" is attempting to join class ID: "+cid)
   }
 
 
@@ -206,7 +208,24 @@ authid = "R6VzrAkdsXDAaEOT^Tob19O5@$9@V#$Ic&u!QCGR4LO$3&ktCV"
      console.log(aa["pn"])
 
      if(aa["pn"]!=undefined||aa["pn"]!=''){
-    pc(aa["sid"],aa["cid"],aa["pn"])} else{
+
+      const v8 = (ds) => {
+if(ds=="restrict"){
+  console.log("Restrict Access Class")
+  pc(aa["sid"],aa["cid"],aa["pn"])
+} else{
+  console.log("Open Access Class")
+getmid(aa["pn"],aa["sid"],aa["cid"])
+}
+      }
+      var path3 = `status/`+aa["cid"]+"/sts"
+      // Create References
+      const dbRefObject = firebase.database().ref().child(path3);
+      // Sync object changes
+      dbRefObject.once('value', get => v8(get.val()))
+
+  
+  } else{
       res.send("Filed Errors - Unusual Activity")
       tmMsg("Crticial Unusual Activity - "+req.body )
 }
