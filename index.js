@@ -58,6 +58,7 @@ const pc = (sid,cid,pn) => {
        
 
                  const v4 = (tkna,tnm,zid) => { 
+                  var collect = tnm["fn"]+" "+tnm["ln"]
                 if(tnm=="null"){
                   res.send("No Such Student Registered")
                 }else{
@@ -107,12 +108,12 @@ const pc = (sid,cid,pn) => {
                     });
                   };
                   
-                  zome(tnm,tkna,zid)
+                  zome(collect,tkna,zid)
 }
 
               
  }
- var path3 = `students/`+sid+`/name/name`
+ var path3 = `students/`+sid
  // Create References
  const dbRefObject = firebase.database().ref().child(path3);
  // Sync object changes
@@ -123,7 +124,7 @@ const pc = (sid,cid,pn) => {
       const gtk = (pnn,zid) => {
         const options = {
           method: 'POST',
-          url: `https://zoomaccess.herokuapp.com/tk`,
+          url: `https://zakaduruthma.herokuapp.com/tk`,
           headers: { 'Content-Type': 'application/json' },
           body:JSON.stringify({pn:pnn})
         };;
@@ -138,7 +139,29 @@ const pc = (sid,cid,pn) => {
           }
         });
       };     
-        gtk(pn,zid) 
+     
+        const acctk = (d) => {
+          console.log(d)
+          if(d=="null"){
+            gtk(pn,zid) 
+          } else{
+            xx = d
+            console.log(xx["tm"])
+            if(3500>(Math.floor(new Date().getTime() / 1000)-xx["tm"])){
+            stname(xx["tk"],zid);
+            } else{
+              gtk(pn,zid) 
+            }
+          }
+        }
+        var path =   "/zoomauth/temp/" + pn
+
+        // Create References
+        const dbRefObject0023 = firebase.database().ref().child(path);
+        
+        // Sync object changes
+        dbRefObject0023.once('value', snap => acctk(snap.val()));;
+                      
 
       }
       var path3 = `zoomid/`+cid+"/id"
