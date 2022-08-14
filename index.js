@@ -210,12 +210,26 @@ authid = "R6VzrAkdsXDAaEOT^Tob19O5@$9@V#$Ic&u!QCGR4LO$3&ktCV"
      if(aa["pn"]!=undefined||aa["pn"]!=''){
 
       const v8 = (ds) => {
+        Date.prototype.getWeekOfMonth = function() {
+          var firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
+          var offsetDate = this.getDate() + firstWeekday - 1;
+          return Math.floor(offsetDate / 7);}
 if(ds=="restrict"){
   console.log("Restrict Access Class")
   pc(aa["sid"],aa["cid"],aa["pn"])
 } else{
-  console.log("Open Access Class")
-getmid(aa["pn"],aa["sid"],aa["cid"])
+  if(ds=="restrictf"){
+    console.log("Restrict Access Class | First Week free")
+if(new Date().getWeekOfMonth()==1){
+  getmid(aa["pn"],aa["sid"],aa["cid"])
+} else{
+  pc(aa["sid"],aa["cid"],aa["pn"])
+}
+
+}else{
+    console.log("Open Access Class")
+  getmid(aa["pn"],aa["sid"],aa["cid"])
+  }
 }
       }
       var path3 = `status/`+aa["cid"]+"/sts"
