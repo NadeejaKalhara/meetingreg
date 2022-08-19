@@ -17,10 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 app.use(cors());
 var port = process.env.PORT || 5000;
-app.use(express.static(path.join(__dirname, 'public')))
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
-app.get('/', (req, res) => res.render('pages/index'))
+app.get('/', (req, res) => res.send('started'))
 
 app.post('/zoom', function(req, res) {
   const BOT_TOKEN = '5403190293:AAEHtiIEaSVESqcIrRmN202eOm5niqZ5_hA'
