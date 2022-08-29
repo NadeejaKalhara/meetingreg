@@ -109,7 +109,7 @@ dbRefObject.once('value', get => v4(tkna,get.val(),zid));
 const gtk = (pnn,zid) => {
   const options = {
     method: 'POST',
-    url: `https://zakaduruthma.herokuapp.com/tk`,
+    url: `https://aduruthuma-server-01-token.onrender.com/tk`,
     headers: { 'Content-Type': 'application/json' },
     body:JSON.stringify({pn:pnn})
   };;
