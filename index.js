@@ -8,10 +8,17 @@ const { json } = require('express');
 var firebase = require("firebase-admin");
 
 var serviceAccount = require(__dirname+"/private/cre.json");
+var serviceAccountd = require(__dirname+"/private/st.json");
+
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
   databaseURL: "https://aduruthuma-lms-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
+
+var st = firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccountd),
+  databaseURL: "https://aduruthuma-default-rtdb.asia-southeast1.firebasedatabase.app/"
+}, 'secondary');
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -90,6 +97,11 @@ const getmid = (pn,sid,cid) => {
                 
                 if (!error) //throw new Error(error);
                   console.log(response.body);
+                  if(res.headersSent) { } else {
+                    tmMsg(response.body)
+                res.send(response.body)
+
+                  }
               });
             };
             
@@ -215,9 +227,18 @@ if(ds=="restrict"){
   console.log("Restrict Access Class")
   pc(aa["sid"],aa["cid"],aa["pn"])
 } else{
-  if(ds=="restrictf"){
-    console.log("Restrict Access Class | First Week free")
-if(new Date().getWeekOfMonth()==1){
+  if(ds.includes("auto")){
+ var thear =    ds.split("``")
+ var startdate = parseInt(thear[1])
+ var endate = parseInt(thear[2])
+    var daraz = new Date();
+   
+    console.log("Current Date is "+ daraz.getDate())
+    console.log("Auto Access Class | Open from " + startdate + " to " +endate )
+    console.log(daraz.getDate()<endate)
+    console.log(daraz.getDate()>startdate)
+if(daraz.getDate()<endate&&daraz.getDate()>startdate){
+  console.log("In free cuz today is " +daraz.getDate() )
   getmid(aa["pn"],aa["sid"],aa["cid"])
 } else{
   pc(aa["sid"],aa["cid"],aa["pn"])
@@ -231,7 +252,7 @@ if(new Date().getWeekOfMonth()==1){
       }
       var path3 = `status/`+aa["cid"]+"/sts"
       // Create References
-      const dbRefObject = firebase.database().ref().child(path3);
+      const dbRefObject = st.database().ref().child(path3);
       // Sync object changes
       dbRefObject.once('value', get => v8(get.val()))
 
