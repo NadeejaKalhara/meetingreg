@@ -196,7 +196,7 @@ const pc = (sid,cid,pn) => {
 
 };
 
-var path3 = `pay/`+ cid +`/`+ sid+  `/`+ mn
+var path3 = `pay/`+ cid +`/`+ sid+  `/`+ ('0' + parseInt(mn)).slice(-2)+"/pay"
 // Create References
 const dbRefObject = firebase.database().ref().child(path3);
 // Sync object changes
