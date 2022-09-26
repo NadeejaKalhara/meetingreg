@@ -197,6 +197,7 @@ const pc = (sid,cid,pn) => {
 };
 
 var path3 = `pay/`+ cid +`/`+ sid+  `/`+ ('0' + parseInt(mn)).slice(-2)+"/pay"
+console.log(path)
 // Create References
 const dbRefObject = firebase.database().ref().child(path3);
 // Sync object changes
@@ -219,35 +220,39 @@ authid = "R6VzrAkdsXDAaEOT^Tob19O5@$9@V#$Ic&u!QCGR4LO$3&ktCV"
      if(aa["pn"]!=undefined||aa["pn"]!=''){
 
       const v8 = (ds) => {
-        Date.prototype.getWeekOfMonth = function() {
-          var firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
-          var offsetDate = this.getDate() + firstWeekday - 1;
-          return Math.floor(offsetDate / 7);}
+if(ds==null){
+  res.send("Please ask your teacher to fill out class payment info")
+}else{
+  Date.prototype.getWeekOfMonth = function() {
+    var firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
+    var offsetDate = this.getDate() + firstWeekday - 1;
+    return Math.floor(offsetDate / 7);}
 if(ds=="restrict"){
-  console.log("Restrict Access Class")
-  pc(aa["sid"],aa["cid"],aa["pn"])
+console.log("Restrict Access Class")
+pc(aa["sid"],aa["cid"],aa["pn"])
 } else{
-  if(ds.includes("auto")){
- var thear =    ds.split("``")
- var startdate = parseInt(thear[1])
- var endate = parseInt(thear[2])
-    var daraz = new Date();
-   
-    console.log("Current Date is "+ daraz.getDate())
-    console.log("Auto Access Class | Open from " + startdate + " to " +endate )
-    console.log(daraz.getDate()<endate)
-    console.log(daraz.getDate()>startdate)
+if(ds.includes("auto")){
+var thear =    ds.split("``")
+var startdate = parseInt(thear[1])
+var endate = parseInt(thear[2])
+var daraz = new Date();
+
+console.log("Current Date is "+ daraz.getDate())
+console.log("Auto Access Class | Open from " + startdate + " to " +endate )
+console.log(daraz.getDate()<endate)
+console.log(daraz.getDate()>startdate)
 if(daraz.getDate()<endate&&daraz.getDate()>startdate){
-  console.log("In free cuz today is " +daraz.getDate() )
-  getmid(aa["pn"],aa["sid"],aa["cid"])
+console.log("In free cuz today is " +daraz.getDate() )
+getmid(aa["pn"],aa["sid"],aa["cid"])
 } else{
-  pc(aa["sid"],aa["cid"],aa["pn"])
+pc(aa["sid"],aa["cid"],aa["pn"])
 }
 
 }else{
-    console.log("Open Access Class")
-  getmid(aa["pn"],aa["sid"],aa["cid"])
-  }
+console.log("Open Access Class")
+getmid(aa["pn"],aa["sid"],aa["cid"])
+}
+}
 }
       }
       var path3 = `status/`+aa["cid"]+"/sts"
